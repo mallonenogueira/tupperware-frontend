@@ -12,6 +12,7 @@ const Container = styled.div`
 
 const Label = styled.label`
   border: 2px dotted blueviolet;
+  color: blueviolet;
   width: 500px;
   height: 250px;
   display: flex;
@@ -54,25 +55,32 @@ export default function App() {
         />
 
         <Label
-          onDragOver={event => event.preventDefault()}
-          onDragEnter={event => event.preventDefault()}
-          onDrop={event => {
+          onDragOver={(event: DragEvent) => event.preventDefault()}
+          onDragEnter={(event: DragEvent) => event.preventDefault()}
+          onDrop={(event: DragEvent) => {
             event.preventDefault();
+            if (!event.dataTransfer || !event.dataTransfer.files) return;
+
             setFile(event.dataTransfer.files[0]);
           }}
         >
-          <h3>{fileName}</h3>
+          <h3>
+            {fileName ||
+              "Solte seus arquivos aqui ou clique para selecionar! =D"}
+          </h3>
 
           <Input
             type="file"
-            onChange={event => {
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              if (!event.target || !event.target.files) return;
+
               setFile(event.target.files[0]);
             }}
           />
         </Label>
 
-        <h2>{description}</h2>
         <img title={fileName} src={base64} alt="" />
+        <h2>{description}</h2>
       </Container>
     </div>
   );
