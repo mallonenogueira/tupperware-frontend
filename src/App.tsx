@@ -64,10 +64,10 @@ export default function App() {
             setFile(event.dataTransfer.files[0]);
           }}
         >
-          <h3>
+          <p>
             {fileName ||
               "Solte seus arquivos aqui ou clique para selecionar! =D"}
-          </h3>
+          </p>
 
           <Input
             type="file"
