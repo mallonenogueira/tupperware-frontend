@@ -1,86 +1,99 @@
 import * as React from "react";
+import htmlToImage from "html-to-image";
 import styled from "styled-components";
+import download from "downloadjs";
 
-const { useState, useEffect } = React;
+import FileLoader, { FileResponse } from "./FileLoader";
+
+const { useState, useRef, useEffect } = React;
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  padding: 20px;
 `;
 
-const Label = styled.label`
-  border: 2px dotted blueviolet;
-  color: blueviolet;
-  width: 500px;
-  height: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const Textarea = styled.textarea`
+  width: 100%;
+  height: 100px;
+  border: dotted 2px blueviolet;
+  padding: 15px;
+  font-size: 1.1rem;
+  color: #555;
 `;
-const Input = styled.input`
-  display: none;
+
+const Imagem = styled.img`
+  width: 100%;
+  max-height: 500px;
+  max-width: 500px;
+  object-fit: cover;
 `;
 
 export default function App() {
   const [description, setDescription] = useState("");
-  const [fileName, setFileName] = useState();
-  const [file, setFile] = useState();
-  const [base64, setBase64] = useState();
+  const ref = useRef<HTMLDivElement>(null);
+  const [file, setFile] = useState<FileResponse>();
+  const [url, setUrl] = useState<string>("");
+  const [image, setImage] = useState<string | null>();
 
   useEffect(() => {
-    if (!file) {
-      setBase64(null);
-      setFileName(null);
+    if (url) {
+      setImage(url);
       return;
     }
 
-    const reader = new FileReader();
+    if (file && file.base64) {
+      setImage(file.base64);
+      return;
+    }
 
-    reader.onload = () => {
-      setBase64(reader.result);
-    };
-
-    reader.readAsDataURL(file);
-    setFileName(file.name);
-  }, [file]);
+    setImage(null);
+  }, [url, file]);
 
   return (
     <div className="App">
       <Container>
-        <textarea
-          value={description}
-          onChange={event => setDescription(event.target.value)}
-        />
+        <div style={{ flex: 1, marginRight: 20 }}>
+          <Textarea
+            placeholder="Descrição do produto..."
+            value={description}
+            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setDescription(event.target.value)
+            }
+          />
+          <input
+            placeholder="Url da imagem"
+            value={url}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUrl(event.target.value)
+            }
+          />
 
-        <Label
-          onDragOver={(event: DragEvent) => event.preventDefault()}
-          onDragEnter={(event: DragEvent) => event.preventDefault()}
-          onDrop={(event: DragEvent) => {
-            event.preventDefault();
-            if (!event.dataTransfer || !event.dataTransfer.files) return;
+          <FileLoader onChange={setFile} />
+          <button
+            className="mt-2"
+            onClick={async () => {
+              if (!ref.current) return;
+              const data = await htmlToImage.toPng(ref.current);
+              // download(data, "produto.png");
+            }}
+          >
+            Download
+          </button>
+        </div>
 
-            setFile(event.dataTransfer.files[0]);
+        <div
+          ref={ref}
+          style={{
+            flex: 1,
+            background: "white"
           }}
         >
-          <p>
-            {fileName ||
-              "Solte seus arquivos aqui ou clique para selecionar! =D"}
-          </p>
+          {image && <Imagem src={image} alt="" />}
 
-          <Input
-            type="file"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              if (!event.target || !event.target.files) return;
-
-              setFile(event.target.files[0]);
-            }}
-          />
-        </Label>
-
-        <img title={fileName} src={base64} alt="" />
-        <h2>{description}</h2>
+          <pre>
+            <p>{description}</p>
+          </pre>
+        </div>
       </Container>
     </div>
   );
