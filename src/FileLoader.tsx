@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import axios from "axios";
 const { useState, useEffect, useRef } = React;
 
 const StyledLabel = styled.label`
@@ -62,7 +63,7 @@ export default function FileLoader({
       className="mt-2"
       onDragOver={(event: DragEvent) => event.preventDefault()}
       onDragEnter={(event: DragEvent) => event.preventDefault()}
-      onDrop={(event: DragEvent) => {
+      onDrop={async (event: DragEvent) => {
         event.preventDefault();
         if (!event.dataTransfer || !event.dataTransfer.files) return;
 

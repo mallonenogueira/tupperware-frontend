@@ -1,11 +1,12 @@
 import * as React from "react";
 import htmlToImage from "html-to-image";
+import domToImage from "dom-to-image";
 import styled from "styled-components";
 import download from "downloadjs";
 
 import FileLoader, { FileResponse } from "./FileLoader";
 
-const { useState, useRef, useEffect } = React;
+const { useState, useRef, useEffect, useCallback } = React;
 
 const Container = styled.div`
   display: flex;
@@ -22,9 +23,8 @@ const Textarea = styled.textarea`
 `;
 
 const Imagem = styled.img`
-  width: 100%;
-  max-height: 500px;
-  max-width: 500px;
+  height: 100%;
+  width: 500px;
   object-fit: cover;
 `;
 
@@ -34,6 +34,28 @@ export default function App() {
   const [file, setFile] = useState<FileResponse>();
   const [url, setUrl] = useState<string>("");
   const [image, setImage] = useState<string | null>();
+  const pasteHandle = useCallback(
+    event => {
+      const items = [...event.clipboardData.items];
+      const item = items.find(({ kind }) => kind === "file");
+
+      if (item !== undefined && item.kind === "file") {
+        const blob = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = event => {
+          if (
+            !event.target ||
+            !event.target.result ||
+            typeof event.target.result !== "string"
+          )
+            return;
+          setUrl(event.target.result);
+        };
+        reader.readAsDataURL(blob);
+      }
+    },
+    [setUrl]
+  );
 
   useEffect(() => {
     if (url) {
@@ -49,6 +71,12 @@ export default function App() {
     setImage(null);
   }, [url, file]);
 
+  useEffect(() => {
+    window.addEventListener("paste", pasteHandle);
+
+    return () => window.removeEventListener("paste", pasteHandle);
+  }, [pasteHandle]);
+
   return (
     <div className="App">
       <Container>
@@ -60,21 +88,29 @@ export default function App() {
               setDescription(event.target.value)
             }
           />
-          <input
+          {/* <input
             placeholder="Url da imagem"
             value={url}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUrl(event.target.value)
             }
-          />
+          /> */}
 
           <FileLoader onChange={setFile} />
           <button
+            style={{
+              border: "2px dotted blueviolet",
+              color: "blueviolet",
+              background: "none",
+              padding: 10,
+              cursor: "pointer"
+            }}
             className="mt-2"
             onClick={async () => {
               if (!ref.current) return;
-              const data = await htmlToImage.toPng(ref.current);
-              // download(data, "produto.png");
+
+              const data = await domToImage.toPng(ref.current);
+              download(data, "produto.png");
             }}
           >
             Download
@@ -85,13 +121,23 @@ export default function App() {
           ref={ref}
           style={{
             flex: 1,
-            background: "white"
+            background: "white",
+            position: "relative",
+            display: "inline-block"
           }}
         >
           {image && <Imagem src={image} alt="" />}
 
-          <pre>
-            <p>{description}</p>
+          <pre
+            style={{
+              position: "absolute",
+              bottom: 10,
+              left: 10
+            }}
+          >
+            <strong>
+              <p>{description}</p>
+            </strong>
           </pre>
         </div>
       </Container>
