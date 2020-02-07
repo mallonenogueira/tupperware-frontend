@@ -7,9 +7,14 @@ import {
   ApplicationContainer,
   ApplicationHeader,
   ApplicationBody,
-  Textarea,
+  Button,
+  ImageContainer,
+  ImageDescription,
+  ImagePrice,
   Input,
-  Button
+  Textarea,
+  P,
+  cor
 } from "./styles";
 
 import FileLoader, { FileResponse } from "./FileLoader";
@@ -18,7 +23,7 @@ const { useState, useRef, useEffect, useCallback } = React;
 
 const Imagem = styled.img`
   height: 100%;
-  width: 500px;
+  width: 100%;
   object-fit: cover;
 `;
 
@@ -50,7 +55,10 @@ export default function App() {
   const ref = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<FileResponse>();
   const [url, setUrl] = useState<string>("");
+  const [de, setDe] = useState<string>("");
+  const [por, setPor] = useState<string>("");
   const [image, setImage] = useState<string | null>();
+  const [bg, setBg] = useState<string | undefined>();
   const pasteHandle = useCallback(
     event => {
       const items = [...event.clipboardData.items];
@@ -99,7 +107,7 @@ export default function App() {
       <ApplicationHeader>Tupperware</ApplicationHeader>
 
       <ApplicationBody>
-        <div style={{ maxWidth: 500, width: 500 }}>
+        <div style={{ maxWidth: 500, width: 500, marginRight: 25 }}>
           <FileLoader onChange={setFile} />
           <Input
             placeholder="Endereço web da imagem"
@@ -112,17 +120,17 @@ export default function App() {
           <div style={{ display: "flex" }}>
             <Input
               placeholder="R$ - De"
-              value={url}
+              value={de}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setUrl(event.target.value)
+                setDe(event.target.value)
               }
             />
 
             <Input
-              placeholder="R$ - Para"
-              value={url}
+              placeholder="R$ - Por"
+              value={por}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setUrl(event.target.value)
+                setPor(event.target.value)
               }
             />
           </div>
@@ -134,6 +142,22 @@ export default function App() {
               setDescription(event.target.value)
             }
           />
+
+          <P>Mude sua cor de fundo</P>
+
+          <div style={{ display: "flex" }}>
+            <Button background={cor.rosa} onClick={() => setBg(cor.rosa)} />
+            <Button
+              background={cor.rosaClaro}
+              onClick={() => setBg(cor.rosaClaro)}
+            />
+            <Button background={cor.azul} onClick={() => setBg(cor.azul)} />
+            <Button
+              background={cor.azulClaro}
+              onClick={() => setBg(cor.azulClaro)}
+            />
+            <Button background={cor.branco} onClick={() => setBg(cor.branco)} />
+          </div>
           <Button
             onClick={async () => {
               if (!ref.current) return;
@@ -144,11 +168,6 @@ export default function App() {
               } catch (err) {
                 console.log("Erro");
               }
-
-              // const data = html2Canvas.
-              // const data = await html2canvas(ref.current, {
-              //   proxy: "https://dsouj.sse.codesandbox.io/"
-              // });
             }}
           >
             Download
@@ -159,24 +178,39 @@ export default function App() {
           ref={ref}
           style={{
             flex: 1,
-            background: "white",
             position: "relative",
             display: "inline-block"
           }}
         >
-          {image && <Imagem src={image} alt="" />}
+          <ImageContainer background={bg}>
+            <ImageDescription>
+              <pre
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  left: 10
+                }}
+              >
+                <strong>
+                  <p>{description}</p>
+                </strong>
+              </pre>
+            </ImageDescription>
+            <ImagePrice>
+              {de && (
+                <div className="de">
+                  De: <span>{de}</span>
+                </div>
+              )}
 
-          <pre
-            style={{
-              position: "absolute",
-              bottom: 10,
-              left: 10
-            }}
-          >
-            <strong>
-              <p>{description}</p>
-            </strong>
-          </pre>
+              {por && (
+                <div className="por">
+                  Por: <strong>{por}</strong>
+                </div>
+              )}
+            </ImagePrice>
+            {image && <Imagem src={image} alt="" />}
+          </ImageContainer>
         </div>
       </ApplicationBody>
     </ApplicationContainer>
