@@ -1,27 +1,6 @@
-import * as React from "react";
-import styled from "styled-components";
-import axios from "axios";
-const { useState, useEffect, useRef } = React;
+import React, { useState, useEffect, useRef } from "react";
 
-const StyledLabel = styled.label`
-  align-items: center;
-  border: 2px dotted blueviolet;
-  color: blueviolet;
-  cursor: pointer;
-  display: flex;
-  height: 100px;
-  justify-content: center;
-  padding: 10px;
-  width: 100%;
-`;
-
-const StyledInput = styled.input`
-  display: none;
-`;
-
-const StyledText = styled.p`
-  text-align: center;
-`;
+import { StyledFileLoader } from "./styles";
 
 export interface FileResponse {
   base64: string;
@@ -35,7 +14,7 @@ export default function FileLoader({
 }) {
   const [file, setFile] = useState();
   const [fileName, setFileName] = useState();
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!file) {
@@ -59,7 +38,7 @@ export default function FileLoader({
   }, [file, onChange]);
 
   return (
-    <StyledLabel
+    <StyledFileLoader
       className="mt-2"
       onDragOver={(event: DragEvent) => event.preventDefault()}
       onDragEnter={(event: DragEvent) => event.preventDefault()}
@@ -72,13 +51,22 @@ export default function FileLoader({
       onKeyUp={(event: KeyboardEvent) => {
         if (ref && ref.current && event.which === 13) ref.current.click();
       }}
-      tabIndex="0"
+      tabIndex={0}
     >
-      <StyledText>
-        {fileName || "Solte seus arquivos aqui ou clique para selecionar! =D"}
-      </StyledText>
+      {fileName ? (
+        <p>fileName</p>
+      ) : (
+        <>
+          <p>
+            Arraste sua imagem aqui <br />
+            ou
+            <br />
+            Clique para selecionar
+          </p>
+        </>
+      )}
 
-      <StyledInput
+      <input
         ref={ref}
         type="file"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +75,6 @@ export default function FileLoader({
           setFile(event.target.files[0]);
         }}
       />
-    </StyledLabel>
+    </StyledFileLoader>
   );
 }

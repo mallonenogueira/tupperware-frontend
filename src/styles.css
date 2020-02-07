@@ -1,8 +1,14 @@
 * {
-  font-family: Roboto, sans-serif;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  outline: 0;
+  font-family: Montserrat Alternates, Roboto, sans-serif;
+}
+
+body {
+  font-family: Montserrat Alternates, Roboto, sans-serif;
+  font-size: 100%;
 }
 
 .mt-2 {

@@ -1,32 +1,49 @@
 import * as React from "react";
-import htmlToImage from "html-to-image";
 import domToImage from "dom-to-image";
 import styled from "styled-components";
 import download from "downloadjs";
 
+import {
+  ApplicationContainer,
+  ApplicationHeader,
+  ApplicationBody,
+  Textarea,
+  Input,
+  Button
+} from "./styles";
+
 import FileLoader, { FileResponse } from "./FileLoader";
 
 const { useState, useRef, useEffect, useCallback } = React;
-
-const Container = styled.div`
-  display: flex;
-  padding: 20px;
-`;
-
-const Textarea = styled.textarea`
-  width: 100%;
-  height: 100px;
-  border: dotted 2px blueviolet;
-  padding: 15px;
-  font-size: 1.1rem;
-  color: #555;
-`;
 
 const Imagem = styled.img`
   height: 100%;
   width: 500px;
   object-fit: cover;
 `;
+
+const PROXY_URL = "https://dsouj.sse.codesandbox.io/proxy";
+
+function isValidUrl(url: string) {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  ); // fragment locator
+  return !!pattern.test(url);
+}
+
+function getProxyUrl(url: string) {
+  if (isValidUrl(url)) {
+    return `${PROXY_URL}?url=${url}`;
+  }
+
+  return url;
+}
 
 export default function App() {
   const [description, setDescription] = useState("");
@@ -59,7 +76,7 @@ export default function App() {
 
   useEffect(() => {
     if (url) {
-      setImage(url);
+      setImage(getProxyUrl(url));
       return;
     }
 
@@ -78,43 +95,64 @@ export default function App() {
   }, [pasteHandle]);
 
   return (
-    <div className="App">
-      <Container>
-        <div style={{ flex: 1, marginRight: 20 }}>
+    <ApplicationContainer>
+      <ApplicationHeader>Tupperware</ApplicationHeader>
+
+      <ApplicationBody>
+        <div style={{ maxWidth: 500, width: 500 }}>
+          <FileLoader onChange={setFile} />
+          <Input
+            placeholder="Endereço web da imagem"
+            value={url}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUrl(event.target.value)
+            }
+          />
+
+          <div style={{ display: "flex" }}>
+            <Input
+              placeholder="R$ - De"
+              value={url}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setUrl(event.target.value)
+              }
+            />
+
+            <Input
+              placeholder="R$ - Para"
+              value={url}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setUrl(event.target.value)
+              }
+            />
+          </div>
+
           <Textarea
-            placeholder="Descrição do produto..."
+            placeholder="Detalhes do produto"
             value={description}
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
               setDescription(event.target.value)
             }
           />
-          {/* <input
-            placeholder="Url da imagem"
-            value={url}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setUrl(event.target.value)
-            }
-          /> */}
-
-          <FileLoader onChange={setFile} />
-          <button
-            style={{
-              border: "2px dotted blueviolet",
-              color: "blueviolet",
-              background: "none",
-              padding: 10,
-              cursor: "pointer"
-            }}
-            className="mt-2"
+          <Button
             onClick={async () => {
               if (!ref.current) return;
 
-              const data = await domToImage.toPng(ref.current);
-              download(data, "produto.png");
+              try {
+                const data = await domToImage.toPng(ref.current);
+                download(data, "produto.png");
+              } catch (err) {
+                console.log("Erro");
+              }
+
+              // const data = html2Canvas.
+              // const data = await html2canvas(ref.current, {
+              //   proxy: "https://dsouj.sse.codesandbox.io/"
+              // });
             }}
           >
             Download
-          </button>
+          </Button>
         </div>
 
         <div
@@ -140,7 +178,7 @@ export default function App() {
             </strong>
           </pre>
         </div>
-      </Container>
-    </div>
+      </ApplicationBody>
+    </ApplicationContainer>
   );
 }
