@@ -67,7 +67,7 @@ export default function App() {
       if (item !== undefined && item.kind === "file") {
         const blob = item.getAsFile();
         const reader = new FileReader();
-        reader.onload = event => {
+        reader.onload = (event: any) => {
           if (
             !event.target ||
             !event.target.result ||

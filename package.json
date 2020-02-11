@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "src/index.tsx",
   "proxy": "http://api.teste.com.br/v1",
+  "homepage": "http://mallonenogueira.github.io/React-export-image",
   "dependencies": {
     "@types/dom-to-image": "2.6.0",
     "@types/downloadjs": "1.4.1",
@@ -24,13 +25,16 @@
   "devDependencies": {
     "@types/react": "16.8.8",
     "@types/react-dom": "16.8.2",
+    "gh-pages": "^2.2.0",
     "typescript": "3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": [
     ">0.2%",

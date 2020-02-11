@@ -40,15 +40,15 @@ export default function FileLoader({
   return (
     <StyledFileLoader
       className="mt-2"
-      onDragOver={(event: DragEvent) => event.preventDefault()}
-      onDragEnter={(event: DragEvent) => event.preventDefault()}
-      onDrop={async (event: DragEvent) => {
+      onDragOver={(event: any) => event.preventDefault()}
+      onDragEnter={(event: any) => event.preventDefault()}
+      onDrop={async (event: any) => {
         event.preventDefault();
         if (!event.dataTransfer || !event.dataTransfer.files) return;
 
         setFile(event.dataTransfer.files[0]);
       }}
-      onKeyUp={(event: KeyboardEvent) => {
+      onKeyUp={(event: any) => {
         if (ref && ref.current && event.which === 13) ref.current.click();
       }}
       tabIndex={0}
