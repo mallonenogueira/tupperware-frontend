@@ -21,10 +21,10 @@ import FileLoader, { FileResponse } from "./FileLoader";
 
 const { useState, useRef, useEffect, useCallback } = React;
 
-const Imagem = styled.img`
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
+const Imagem = styled.img<{ img: boolean }>`
+  ${props => (props.img ? "height: 100%;" : "500px")}
+  ${props => (props.img ? "width: 100%;" : "")}
+  ${props => (props.img ? "object-fit: contain;" : "")}
 `;
 
 const PROXY_URL = "https://dsouj.sse.codesandbox.io/proxy";
@@ -50,14 +50,30 @@ function getProxyUrl(url: string) {
   return url;
 }
 
-export default function App() {
-  const [description, setDescription] = useState("");
+export default function App({
+  selected,
+  setSelected
+}: {
+  selected: any;
+  setSelected: any;
+}) {
+  console.log(selected);
+  const [description, setDescription] = useState(
+    selected ? selected.texts[1] + " " + selected.texts[2] : ""
+  );
   const ref = useRef<HTMLDivElement>(null);
+  const refImg = useRef<HTMLImageElement>(null);
   const [file, setFile] = useState<FileResponse>();
   const [url, setUrl] = useState<string>("");
-  const [de, setDe] = useState<string>("");
-  const [por, setPor] = useState<string>("");
-  const [image, setImage] = useState<string | null>();
+  const [img, setImg] = useState<boolean>(true);
+  const [de, setDe] = useState<string>(selected ? selected.texts[4] : "");
+  const [por, setPor] = useState<string>(
+    selected ? "R$ " + selected.texts[6] : ""
+  );
+  const [image, setImage] = useState<string | null>(
+    selected ? selected.img : undefined
+  );
+  console.log(image);
   const [bg, setBg] = useState<string | undefined>();
   const pasteHandle = useCallback(
     event => {
@@ -93,6 +109,10 @@ export default function App() {
       return;
     }
 
+    if (selected) {
+      setImage(selected.img);
+      return;
+    }
     setImage(null);
   }, [url, file]);
 
@@ -104,7 +124,11 @@ export default function App() {
 
   return (
     <ApplicationContainer>
-      <ApplicationHeader>Tupperware</ApplicationHeader>
+      <ApplicationHeader>
+        Tupperware
+        <button onClick={() => setSelected(null)}>Voltar</button>
+        <button onClick={() => setImg(!img)}>Mudar imagem</button>
+      </ApplicationHeader>
 
       <ApplicationBody>
         <div style={{ maxWidth: 500, width: 500, marginRight: 25 }}>
@@ -209,7 +233,14 @@ export default function App() {
                 </div>
               )}
             </ImagePrice>
-            {image && <Imagem src={image} alt="" />}
+            {image && (
+              <Imagem
+                ref={(...args) => console.log(args)}
+                img={img}
+                src={image}
+                alt=""
+              />
+            )}
           </ImageContainer>
         </div>
       </ApplicationBody>

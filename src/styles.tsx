@@ -9,7 +9,7 @@ export const cor = {
 };
 
 const tema = {
-  borda: `solid 5px ${cor.branco}`,
+  borda: `solid 3px ${cor.branco}`,
   cor: cor.branco,
   bordaHover: cor.azulClaro,
   fundoInput: cor.rosa,
@@ -26,8 +26,8 @@ const defaultInput = `
   color: ${tema.cor};
   border-radius: ${tema.borderRadius};
   box-shadow: ${tema.boxShadow};
-  font-size: 1rem;
-  padding: 15px 25px;
+  font-size: 0.9rem;
+  padding: 15px 20px;
   outline: 0;
   margin: 12px;
   width: calc(100% - 24px);
@@ -61,8 +61,8 @@ export const ApplicationHeader = styled.header`
   color: ${tema.cor};
   display: flex;
   font-weight: bold;
-  font-size: 42px;
-  height: 80px;
+  font-size: 32px;
+  height: 50px;
   left: 0;
   padding: 15px 40px;
   position: sticky;
@@ -71,7 +71,7 @@ export const ApplicationHeader = styled.header`
 `;
 
 export const ApplicationBody = styled.main`
-  padding: 25px;
+  padding: 20px;
   display: flex;
   flex: 1;
   overflow: auto;
@@ -89,16 +89,16 @@ export const Textarea = styled.textarea`
 
 export const Input = styled.input`
   ${defaultInput}
-  height: 50px;
+  height: 40px;
 `;
 
 export const Button = styled.button<{ background?: string }>`
   border: ${tema.borda};
   color: ${tema.cor};
   background: ${(props: any) => props.background || tema.fundoBotao};
-  font-size: 1rem;
-  padding: 0 25px;
-  height: 50px;
+  font-size: 0.9rem;
+  padding: 0 20px;
+  height: 40px;
   align-items: center;
   cursor: pointer;
   display: flex;
