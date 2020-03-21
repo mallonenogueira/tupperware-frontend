@@ -153,6 +153,7 @@ const imageCommons = `
   border-radius: ${tema.borderRadius};
   box-shadow: -3px -1px 5px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
   position: absolute;
+  z-index: 2;
 `;
 
 export const ImageDescription = styled.div`

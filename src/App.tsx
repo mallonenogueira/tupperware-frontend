@@ -1,16 +1,14 @@
 import * as React from "react";
 import domToImage from "dom-to-image";
-import styled from "styled-components";
 import download from "downloadjs";
+
+import ImageContainer from './pages/export-app/ImageContainer';
 
 import {
   ApplicationContainer,
   ApplicationHeader,
   ApplicationBody,
   Button,
-  ImageContainer,
-  ImageDescription,
-  ImagePrice,
   Input,
   Textarea,
   P,
@@ -21,11 +19,7 @@ import FileLoader, { FileResponse } from "./FileLoader";
 
 const { useState, useRef, useEffect, useCallback } = React;
 
-const Imagem = styled.img<{ img: boolean }>`
-  ${props => (props.img ? "height: 100%;" : "500px")}
-  ${props => (props.img ? "width: 100%;" : "")}
-  ${props => (props.img ? "object-fit: contain;" : "")}
-`;
+
 
 const PROXY_URL = "https://dsouj.sse.codesandbox.io/proxy";
 
@@ -57,7 +51,6 @@ export default function App({
   selected: any;
   setSelected: any;
 }) {
-  console.log(selected);
   const [description, setDescription] = useState(
     selected ? selected.texts[1] + " " + selected.texts[2] : ""
   );
@@ -73,7 +66,6 @@ export default function App({
   const [image, setImage] = useState<string | null>(
     selected ? selected.img : undefined
   );
-  console.log(image);
   const [bg, setBg] = useState<string | undefined>();
   const pasteHandle = useCallback(
     event => {
@@ -190,7 +182,7 @@ export default function App({
                 const data = await domToImage.toPng(ref.current);
                 download(data, "produto.png");
               } catch (err) {
-                console.log("Erro");
+                console.log("Erro", err.message);
               }
             }}
           >
@@ -206,42 +198,14 @@ export default function App({
             display: "inline-block"
           }}
         >
-          <ImageContainer background={bg}>
-            <ImageDescription>
-              <pre
-                style={{
-                  position: "absolute",
-                  top: 10,
-                  left: 10
-                }}
-              >
-                <strong>
-                  <p>{description}</p>
-                </strong>
-              </pre>
-            </ImageDescription>
-            <ImagePrice>
-              {de && (
-                <div className="de">
-                  De: <span>{de}</span>
-                </div>
-              )}
-
-              {por && (
-                <div className="por">
-                  Por: <strong>{por}</strong>
-                </div>
-              )}
-            </ImagePrice>
-            {image && (
-              <Imagem
-                ref={(...args) => console.log(args)}
-                img={img}
-                src={image}
-                alt=""
-              />
-            )}
-          </ImageContainer>
+          <ImageContainer 
+            bg={bg}
+            description={description}
+            de={de}
+            por={por}
+            image={image}
+            img={img}
+          />
         </div>
       </ApplicationBody>
     </ApplicationContainer>
