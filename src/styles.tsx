@@ -153,16 +153,16 @@ const imageCommons = `
   border-radius: ${tema.borderRadius};
   box-shadow: -3px -1px 5px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
   position: absolute;
-  z-index: 2;
+  font-family: Montserrat Alternates, Roboto, sans-serif;
 `;
 
 export const ImageDescription = styled.div`
   ${imageCommons};
-  width: 300px;
+  /* width: 300px;
   height: 65px;
   top: 0;
-  left: 0;
-  transform: rotateZ(-15deg) translateY(65px) translateX(10px);
+  left: 0; */
+  /* transform: rotateZ(-15deg) translateY(65px) translateX(10px); */
 
   display: flex;
   align-items: center;
@@ -171,10 +171,10 @@ export const ImageDescription = styled.div`
 
 export const ImagePrice = styled.div`
   ${imageCommons};
-  width: 160px;
+  /* width: 160px;
   height: 85px;
   bottom: 25px;
-  right: 25px;
+  right: 25px; */
   display: flex;
   align-items: center;
   justify-content: center;

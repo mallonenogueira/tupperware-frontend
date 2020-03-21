@@ -1,5 +1,6 @@
 import * as React from "react";
 import domToImage from "dom-to-image";
+import htmlToImage from "html-to-image";
 import download from "downloadjs";
 
 import ImageContainer from './pages/export-app/ImageContainer';
@@ -18,8 +19,6 @@ import {
 import FileLoader, { FileResponse } from "./FileLoader";
 
 const { useState, useRef, useEffect, useCallback } = React;
-
-
 
 const PROXY_URL = "https://dsouj.sse.codesandbox.io/proxy";
 
@@ -56,6 +55,7 @@ export default function App({
   );
   const ref = useRef<HTMLDivElement>(null);
   const refImg = useRef<HTMLImageElement>(null);
+  const [hiddenDrag, setHiddenDrag] = useState(false);
   const [file, setFile] = useState<FileResponse>();
   const [url, setUrl] = useState<string>("");
   const [img, setImg] = useState<boolean>(true);
@@ -120,6 +120,7 @@ export default function App({
         Tupperware
         <button onClick={() => setSelected(null)}>Voltar</button>
         <button onClick={() => setImg(!img)}>Mudar imagem</button>
+        <button onClick={() => setHiddenDrag(!hiddenDrag)}>{hiddenDrag ? 'Editar' : 'Esconder'}</button>
       </ApplicationHeader>
 
       <ApplicationBody>
@@ -177,12 +178,16 @@ export default function App({
           <Button
             onClick={async () => {
               if (!ref.current) return;
+              const oldHiddenDrag = hiddenDrag;
+              setHiddenDrag(true);
 
               try {
-                const data = await domToImage.toPng(ref.current);
+                const data = await htmlToImage.toPng(ref.current);
                 download(data, "produto.png");
               } catch (err) {
                 console.log("Erro", err.message);
+              } finally {
+                setHiddenDrag(oldHiddenDrag);
               }
             }}
           >
@@ -205,6 +210,7 @@ export default function App({
             por={por}
             image={image}
             img={img}
+            hiddenDrag={hiddenDrag}
           />
         </div>
       </ApplicationBody>
