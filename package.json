@@ -10,7 +10,7 @@
     "@types/downloadjs": "1.4.1",
     "@types/html2canvas": "0.0.35",
     "@types/styled-components": "4.4.2",
-    "axios": "0.19.2",
+    "axios": "1.6.0",
     "dom-to-image": "2.6.0",
     "dom-to-image-more": "2.8.0",
     "downloadjs": "1.4.7",
